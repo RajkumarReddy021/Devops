@@ -1,0 +1,42 @@
+#### Deployment server get the artifact from S3 bucket 
+
+1. install java on server -- apt install default-jdk -y
+
+2. install tomcat from tomcat.apache.org
+
+	wget <url to download tomcat file>
+
+	1.extract file using cmd : tar -zxvf <tar.gz file>
+
+	2.go to bin folder and execute startup.sh 
+		ex: ./startup.sh
+	
+
+3. Expose the port in security group 
+   
+   TO check the host is working in local or not  :    curl localhost:8080    : to add the host
+   to get the host to check in internet : curl ifconfig.me
+
+4. apt install net-tools 
+   TO check the port number : netstat -lntup
+5. ps -ef | grep tomcat : Tocheck the tomcat is running or not (to check how many process are running or not).
+_______________________________________________________________________________________________________________________________________
+
+#### install aws s3 to download artifact from the s3 bucket
+
+Steps: 
+	apt install awscli
+ 1. Access to webapps directory to host the server.
+ 2. aws configure : configure S3 bucket access key credentials to server
+ 3. Copy the file from S3 bucket to current folder(server)
+ 4. 
+    
+______________________________________________________________________________________________________________________________________
+Tomcat Directory Structure:
+bin : start/stop tomcat
+logs : is used to check the logs of your tomcat application server.
+webapps: is used for hosting war files.
+lib : hosts libraries.
+temp/work : is used for hosting temporary data.
+conf:  hosts configuration files like server.xml and web.xml/context.xml etc....... we use this for maintaining configurations.
+_______________________________________________________________________________________________________________________________________

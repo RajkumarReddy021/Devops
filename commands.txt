@@ -1,42 +1,41 @@
-1. Bring back file from staging area to workstation
-	
-	 git reset file_name
-============================================================================	
-3. To move all the files from workstation to staging area
-	 
-	 git add -A 
-=============================================================================
-4. Bring back all the files from local repo to staging area.
-	
-	git reset --soft <previous commit  id>
-==============================================================================
-5. Bring back the files from local repo to workstation.
-	
-	git reset --mixed <commit id>
-==============================================================================
-6. create an empty commit without a file .
+1. tail -fn 5 /etc/passwd:  To monitor the Growing tail
 
-	git commit --allow-empty -m "empty"
-===============================================================================
-7. create hotfix  branch and feature branch under master and develop and push it to remote.
-	
-	git checkout master
-	git checkout -b  hotfix/login
-=================================================================================
-8. delete hotfix and feature branch from remote and locally and first send that data to main branches before delete.
-	
-	git merge hotfix/login
-	git merge featutre/login
-	
-	git branch -D hotflix/login : used to remove branch from local .
-	git push origin --delete hotfix/login : used to remove branch from remote.
-====================================================================================
-9. when branch is deleted from local then fetch particular branch from remote.
-	git fetch 
-	git checkout develop	
-====================================================================================
-10. fetching the data from the remote to local repo and then workstation.	
-	git merge origin/master
-====================================================================================
-11.  file fetch from remote to  local repo then extra data added to that file will shown here
-	git differ origin/master..master
+2. ls -l folder_name/ : to list all the files inside this folder.
+
+3. cd /etc/ansible : configure file present in it.
+
+4. ec2-user : username for amazon linux/redhat linux.
+
+5. ssh -i ssh-key ubuntu@ip.address : to connect with remote server.
+
+6. hostname -i : to know private ip address
+
+7. /usr/bin : to make anything global move to this directory.
+
+8. terraform output > file.txt : to copy the to the file.
+
+9. /var/lib/docker/volumes : used to find docker volumes.
+
+10. ifconfig : to know the ip address
+
+11.apt install net-tools -y && apt install iputils-ping -y
+
+12.(ubuntu) vi ~/.ssh/authorized_keys : to paste a key of another machine in this directory.
+
+13. ssh-keygen : to generate key of a Ec2 machine.
+
+14. set -x : debug
+
+15. set -e : exit the script when there is a error
+
+16. set -o pipefile : 
+
+17. find  / -name pam.d : find cmd
+ 
+18. ubuntu@ip-172-31-44-29:~/K8$ minikube service my-service
+|-----------|------------|-------------|---------------------------|
+| NAMESPACE |    NAME    | TARGET PORT |            URL            |
+|-----------|------------|-------------|---------------------------|
+| default   | my-service |          80 | http://192.168.49.2:31718 |
+|-----------|------------|-------------|---------------------------|
+

@@ -1,0 +1,115 @@
+================================
+Official portal/website :::: maven.apache.org
+================================
+Maven
+================================
+Maven is a build tool which is used to convert a human-readable language to machine readable language.
+example :  java to jar/war/ear.
+================================
+Installation:
+apt update 
+apt install maven
+mvn -v  (verify maven version)
+================================
+Generate Web project =========
+=================================
+mvn archetype:generate :  is used to generate a project with standard directory structure.Example::::
+
+sample project: (jar)
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-archetype -DarchetypeVersion=1.4
+
+
+WebApp Project (war)
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-webapp -DarchetypeVersion=1.4
+=========
+
+
+Build command :  mvn package
+================================
+Maven has  Build-lifecycle: 
+1. CLean  ::::: clean is used to remove a target directory.
+2. Validate  :::::: validate is used for verifying pom.xml and src folder present or not.
+3. Compile  :::::: is used to convert java files to class files.
+4. Test  ::::::: is used to preform unit test cases, if there.
+5. package  :::: is used to generate a jar/war file.
+6. Install  ::::: is used to copy artifact/war file into local repository. (local repository - .m2)
+7. Deploy  :::: is used to copy artifact to remote/private repository.
+================================
+Maven Repositories:
+1. Central repository - repo.maven.apache.org
+2. local repository - .m2
+3. remote/private repository. - s3 buckets/nexus/jfrog
+================================
+two main files in maven :::::
+1. pom.xml (project Object Model) : is an xml file which is related to project level, and used for managing dependencies/plugins.
+2. settings.xml : is used for configuring sensitive data like usernames/password/private repo details. we can also used for project level .
+================================
+
+Install awscli to upload war file to aws s3 service :
+apt update 
+apt install awscli -y
+================================
+aws --version   :   is used to check the awscli version.
+ex: aws --version
+================================
+aws configure : provide your access key and secret key and region name.
+================================
+aws s3 ls : is used to list the existing buckets present in aws s3 .
+ex: aws s3 ls 
+================================
+aws s3 cp : is used to copy a file from ec2 machine to s3 bucket.
+ex: aws s3 cp mg.war s3://sreenidevopsgroupten/mg/
+ex: aws s3 cp /home/ubuntu/workspace/flipkart/target/flipkart-1.0-SNAPSHOT.jar  s3://deveopsgroupeleven-flipkart/flipkart/
+================================
+
+
+
+
+
+Deployment Steps: This should performed in dev deployment server.
+
+1.  Install java on dev server 
+steps :  
+apt update 
+apt install default-jdk -y
+java -version : is used to check the java version number.
+=====================
+2. Download tomcat from offical portal (tomcat.apache.org)
+steps:
+go to tomcat.apache.org/downloads
+extract using -  tar -zxvf <tar.gz file>
+go to bin folder and execute startup.sh 
+ex: ./startup.sh
+expose the port 8080 in security group 
+access 8080 port number with your public ip
+ex: 54.23.56.45:8080
+=====================
+Install awscli to download war file from s3 bucket.
+steps:
+apt update
+apt install awscli -y
+aws --version
+=====================
+Tomcat Directory Structure:
+bin : start/stop tomcat
+logs : is used to check the logs of your tomcat application server.
+webapps: is used for hosting war files.
+lib : hosts libraries.
+temp/work : is used for hosting temporary data.
+conf:  hosts configuration files like server.xml and web.xml/context.xml etc....... we use this for maintaining configurations.
+=====================
+What is the difference b/w an app server and web server?
+app server: Which Host dynamic content (war file)
+ex: tomcat/websphere/weblogic
+Tomcat is semi-qualified.
+reason:  missing ejbs/jms, so we can't host enterprise applications.(EAR)
+
+web server : which host static content.
+ex: html/images/jpg  -  apache2/nginx/httpd
+=====================
+
+
+
+
+
+

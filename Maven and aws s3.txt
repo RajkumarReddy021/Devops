@@ -1,0 +1,74 @@
+#### pull the file from remote (git) and convert to machine level language files using maven.(build server)
+
+1. apt install maven : to install maven in server
+
+2.generate web project : 
+mvn archetype:generate :  is used to generate a project with standard directory structure.Example::::
+
+sample project: (jar)
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-archetype -DarchetypeVersion=1.4
+
+
+WebApp Project (war)
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-webapp -DarchetypeVersion=1.4
+
+_____________________________________________________________________________________________________________________________________________
+
+pom.xml (project Object Model) : is an xml file which is related to project level, and used for managing dependencies/plugins.
+settings.xml : is used for configuring sensitive data like usernames/password/private repo details. we can also used for project level .
+_______________________________________________________________________________________________________________________________________________
+
+Maven has  Build-lifecycle: 
+1. CLean  ::::: clean is used to remove a target directory.
+2. Validate  :::::: validate is used for verifying pom.xml and src folder present or not.
+3. Compile  :::::: is used to convert java files to class files.
+4. Test  ::::::: is used to preform unit test cases, if there.
+5. package  :::: is used to generate a jar/war file.
+6. Install  ::::: is used to copy artifact/war file into local repository. (local repository - .m2)
+7. Deploy  :::: is used to copy artifact to remote/private repository.
+
+___________________________________________________________________________________________________________________________________________________
+
+#### copy artifacts(war,zip) files to S3 bucket
+
+
+1. apt install awscli -y --> To install aws s3 
+2. aws configure : provide your access key and secret key and region name.
+3. aws s3 cp : is used to copy a file from ec2 machine to s3 bucket.
+	ex: aws s3 cp mg.war s3://sreenidevopsgroupten/mg/
+	ex: aws s3 cp /home/ubuntu/workspace/flipkart	  s3://deveopsgroupeleven-flipkart/flipkart/
+_____________________________________________________________________________________________________________________________________________________
+
+
+Maven Repositories:
+1. Central repository - repo.maven.apache.org
+2. local repository - .m2
+3. remote/private repository. - s3 buckets/nexus/jfrog
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

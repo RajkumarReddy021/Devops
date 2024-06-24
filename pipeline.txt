@@ -1,0 +1,27 @@
+pipeline {
+	agent any
+	tools {
+	maven 'mvn'
+	}
+	parameters {
+		string(name: 'branch', defaultValue: 'master', description: 'provide branch name')
+	}
+	stages {
+		stage('scm') {
+			steps {
+			git branch: '$branch', credentialsId: 'f11fa8df-770f-4edd-a13f-79b1c03fde0b', url: 'https://github.com/RajkumarReddy021/Project01.git'
+			}
+		}
+		stage('build') {
+			steps {
+			sh 'mvn clean package'
+			}
+		}
+		stage('upload') {
+			steps {
+				sh 'aws s3 cp target/*.war s3://practicebucket001/project01/projectZ.war'
+				}
+			}
+		
+	}
+}  

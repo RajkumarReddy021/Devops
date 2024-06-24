@@ -1,0 +1,137 @@
+#####     
+================================================================================
+command to change host name 
+
+	hostnamectl set-hostname <host_name>
+
+================================================================================
+Verify :
+git --version
+
+Installation ::::
+apt update 
+apt install git 
+
+Useful Commands:::
+git init : is used to create a .git folder (initiate a local repository)
+ex: git init flipkart
+===============================================================================
+git status : is used to check the status of a file.
+ex: git status
+ex: git status -s
+===============================================================================
+git add : is used to add files from local workstation to staging area.
+ex: git add a.java
+===============================================================================	
+git commit : is used to commit the file from staging area to local repository.
+ex: git commit -m "a file added"
+==============================================================================
+git remote add : is used to add or set the remote repository URL
+ex: git remote add origin <HttpURL/SSH-url>
+
+git remote add origin URL --> to add a remote repository. 
+git remote -v --> used to know the above origin is configured or not.
+git push origin master --> to move files from local to remote.
+================================================================================
+git config : is used to change the default configurations for git.
+ex: git config --global --edit
+ex: git config --list 
+================================================================================
+how to set the editor ?
+export EDITOR=vi
+================F==============================================================
+git log : is used to display the commit info.
+ex: git log
+ex: git log --oneline
+===============================================================================
+cd /root/.ssh/ --> used to show the keys created.
+root@ip-172-31-42-82:~/.ssh# ssh-keygen --> used to generate keys.	
+
+
+===============================================================================
+git reset --hard : is used to completely switched from one changes/commit to other.
+ex: git reset --hard <commitid>
+
+====================================================
+git revert : is used to remova a particluar commit.
+ex: git revert <commit-id>
+====================================================
+
+git cherry-pick : is used to copy a commit/restore a removed commit.
+ex: git cherry-pick <commit-id>
+====================================================
+git remote -v : is used to check whether local repository is asssociated with remore respository.
+ex: git remote -v 
+====================================================
+git remote add: is used to add a new link or repository URL.
+ex: git remote add URL
+====================================================
+git remote set-url : is used to change the existing URL.
+ex: git remote set-url origin <URL>
+====================================================
+git remote rename : is used to rename the label.
+ex: git remote rename origin myntra.
+====================================================
+
+====================================================
+Two Type of Branches :::: when we develop a new functionality/fix a bug we create branches.
+1. Main/Permanent Branches
+2. Supporting Branches.
+
+1. Main/Permanent Branches:
+- Master  :  Points production ready state/code.
+- Develop :  latest development code will present in development branch.
+
+2. Supporting Branches:
+- feature: suppose we got any requirement, we will create a feature branch bcz we should not disturb existing code.
+- bug: whenever qa team raise a bug, we create this branch.
+- release: This is UAT branch.
+- Hotfix: if we get any issue in production, hotfix branch will be created.
+====================================================
+
+
+
+git branch : is used to list the local branches.
+ex: git branch
+ex: git branch -r (list only remote branches)
+ex: git branch -a (list all local & remote branches)
+====================================================
+git checkout -b : is used to create a new branch and switch to that branch.
+ex: git checkout -b feature/login
+====================================================
+git checkout : is used to switch the branch.
+ex: git checkout master
+====================================================
+git merge:  is used to transfer the data from one branch to other branch.
+ex: git merge feature/login
+====================================================
+git branch -D : is used to delete a local branch.
+ex: git branch -D feature/login
+====================================================
+git push origin --delete  : is used to delete a remote branch.
+ex: git push origin --delete feature/login
+ex: git push origin :branchname
+====================================================
+git reset  :  is used to bring the changed from staging area to local workstation.
+ex: git reset <filename>
+====================================================
+git reset --soft : is used to bring the file from local repository to staging area.
+ex: git reset --soft <previous_commit_id>
+====================================================
+git reset --mixed : is used to bring the files from local repo to local work station.
+ex:git reset --mixed <previous_commit_id>
+====================================================
+git cherry-pick : is used to copy a single commit from one branch to other branch.
+ex: git cherry-pick <commit-id>
+====================================================
+git commit --allow-empty -m "empty" --> used to commit master file to remote.	
+git clone <url>  --> used to copy a repository from remote to local.
+ssh-keygen --> used to generate a key for ssh.
+=====================================================
+git add -A : used to move all the files from workstation to staging area
+====================================================================
+git fetch : to copy remote to local repo.
+git merge origin/master : from local repo to workstation.
+======================================================================
+git diff origin/master..master : to know the differences.
+git merge origin/master : to merge the master.

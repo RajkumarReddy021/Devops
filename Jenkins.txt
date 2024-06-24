@@ -1,0 +1,192 @@
+Jenkins::::
+CI/CD Tool.
+clone---build----uploads3  ---- ci 
+CI : Continuous Integration
+CD:::: continuous deployment/continuous delivery.
+Continuous Deliver :::: manually deployed to prod based up on request.
+ continuous Deploy :  Automatically deployed to prod without any manual intervention.
+
+Installation :::::
+----- java-----
+apt update 
+apt install default-jdk -y
+java -version   :  is used to check the java version
+
+------jenkins---------------
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+  
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+  
+sudo apt-get update
+
+sudo apt-get install jenkins
+service jenkins status
+service jenkins stop
+service jenkins start
+service jenkins restart
+
+jenkins --version : is used to check the jenkin installed version !
+
+jenkins : /var/lib/jenkins 
+cat /etc/passwd	: used to check the jenkins user is created or not.
+
+==============================================================
+
+
+
+
+
+
+
+
+
+==============================================================
+
+crontab syntax reference page :   https://crontab.guru/
+
+upload artifact to s3 bucket:
+apt update 
+apt install awscli
+
+aws --version 
+aws configure   #provide access_key and secret_access_key
+aws s3 ls
+aws s3 mb s3://sreenidevopsgroup9-toyota #to create a bucket.
+aws s3 rb s3://sreenidevopsgroup9-toyota #to remove a bucket.
+=============================
+crontab syntax:
+* * * * *
+minutes hours day month weekoftheday
+
+example: 
+0 17 * * *    ::: triggered every day @ 5 pm
+
+15 16 * * *    ::: triggered every day @ 4:15 pm
+
+16 3 15 * *    :::  trigger should happen @ 3.16 pm everymonth on 15th date.
+
+02 05 28 12 * 2024 ::: 28-12-2024   5:02 pm
+
+======================================
+PIpeline :
+- Declarative :
+Declarative pipline code starts with pipeline { and } brackets. comparing with scripted declarative pipline is user friendly.
+Example :
+
+pipeline {
+  agent {}
+  stages {}
+  parameters {}
+  options {}
+  environments {}
+  tools {}
+}
+
+scripted : code starts with node { and } brackets , comparing with Declarative scripted is little complex.
+node {
+  stages
+}
+
+=====================================
+pipeline {
+  agent any
+  environment { 
+        whatday = 'thursday'
+    }
+  tools {
+    maven 'mvn3.3.9'
+  }
+  triggers {
+    pollSCM('H * * * *')
+  }
+  parameters {
+    string(name: 'branch', defaultValue: '', description: 'PLease mention branch name to clone')
+  }
+  stages {
+    stage ('SCM') {
+	  steps {
+	  git branch: '$branch', credentialsId: 'github-sreenidevopsgroup9', url: 'https://github.com/sreenidevopsgroup9/flipkart.git'
+	  
+	  
+	  }
+	}
+	stage ('Build') {
+	  steps {
+	   sh 'mvn --version'
+	   sh 'mvn clean package'
+	   sh 'echo ${whatday}'
+	  }
+	}
+	stage ('upload') {
+	  steps {
+	   sh 'aws s3 cp target/*.jar s3://sreenidevopsgroup9-toyota/'
+	   sh 'aws s3 cp target/*.jar s3://sreenidevopsgroup9-toyota/$JOB_NAME-$BUILD_NUMBER.jar'
+	   sh 'echo ${whatday}'
+	}
+  }
+  }
+}
+
+
+
+======================================
+pipeline {
+   agent { 
+     label 'slave01||slave02||built-in'
+	 }
+	triggers { pollSCM('H/1 * * * *') }
+	options {
+        timeout(time: 1, unit: 'HOURS') 
+		retry(3) 
+    } 
+	tools {
+        maven 'mvn3.8.3' 
+    }
+	environment {
+	  variable1 = 'firstone'	  
+	}
+	parameters {
+	   choice(name: 'branch', choices: ['master', 'develop', 'feature/login'], description: 'Choose the branch to initate a clone')
+	
+	}
+   stages {
+     stage ('clone') {
+	   steps {
+	     git branch: '$branch', credentialsId: 'github_credentials', url: 'https://github.com/devopsgroup8/kia.git'
+		 sh 'echo $variable1'
+		 
+	   }
+	 }
+   	
+     stage ('build') {
+	   steps {
+	   sh 'mvn clean package'
+	   sh 'echo $variable1'
+	 }
+   }
+} 
+     post { 
+        always { 
+            echo 'All Stages has been completed successfully...!!!'
+        }
+    }  
+}
+
+=======================================
+
+=======================================
+
+
+
+
+
+
+
+
+
+
+
+

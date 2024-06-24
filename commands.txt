@@ -1,0 +1,42 @@
+1. Bring back file from staging area to workstation
+	
+	 git reset file_name
+============================================================================	
+3. To move all the files from workstation to staging area
+	 
+	 git add -A 
+=============================================================================
+4. Bring back all the files from local repo to staging area.
+	
+	git reset --soft <previous commit  id>
+==============================================================================
+5. Bring back the files from local repo to workstation.
+	
+	git reset --mixed <commit id>
+==============================================================================
+6. create an empty commit without a file .
+
+	git commit --allow-empty -m "empty"
+===============================================================================
+7. create hotfix  branch and feature branch under master and develop and push it to remote.
+	
+	git checkout master
+	git checkout -b  hotfix/login
+=================================================================================
+8. delete hotfix and feature branch from remote and locally and first send that data to main branches before delete.
+	
+	git merge hotfix/login
+	git merge featutre/login
+	
+	git branch -D hotflix/login : used to remove branch from local .
+	git push origin --delete hotfix/login : used to remove branch from remote.
+====================================================================================
+9. when branch is deleted from local then fetch particular branch from remote.
+	git fetch 
+	git checkout develop	
+====================================================================================
+10. fetching the data from the remote to local repo and then workstation.	
+	git merge origin/master
+====================================================================================
+11.  file fetch from remote to  local repo then extra data added to that file will shown here
+	git differ origin/master..master

@@ -1,0 +1,222 @@
+
+Docker is a container tool
+apt update
+apt install docker.io -y
+systemctl status docker
+systemctl enable docker 
+
+lsb_release -a
+____________________________________________________________________________________
+
+         """"creating containers &  deleting""""
+		  
+docker run -dit ubuntu:16.04 /bin/bash( containers/ machines created)
+docker ps - to know the containers created
+docker run -dit centos:7 /bin/bash( containers/ machines created)
+docker run -dit ubuntu:18.04 /bin/bash( containers/ machines created)
+
+above created instances download from docker hub
+docker images --> to know the images present in local machine.
+docker ps --> to know the containers running.
+docker run -dit ubuntu:18.10 /bin/bash
+
+docker exec -it 45f26ee945c9 bash --> to login to the container.
+cat /etc/os-release
+exit or ctrl+pq --> to stop the processes.
+ps -ef --> to konw the processes running.
+docker rm -f <container_id> 
+docker rmi ubuntu:18.04(imageIid also we can use) --> to remove the images.
+
+docker stop <contain_id> --> to stop the container.
+docker start <contain_id>
+
+docker ps -a --> to know the all containers(started, stopped, exited containers also).
+docker run --name conainer-one -dit ubuntnu:16.04 --> create container with custom name.
+docker rename <container_id> container_name --> to change the existing  container name.
+
+docker pull ubuntu:20.04 --> without creating the container just pull image from docker.
+docker cp <file_name> container_id:/ --> to copy file from local to container.
+
+docker cp <contaner_name>:/<file_name>
+____________________________________________________________________________________
+
+            """" Create a image from running container""""
+			
+	mkdir /custom_fol 
+	mv *.txt /custom_fol/
+	chmod 777 *.txt
+	
+docker commit <container_name> custom_image_name.
+docker run --name restore -dit <container_id> /bin/bash.
+docker exec -it restore bash
+_______________________________________________________________________________________
+
+			"""" Deleting all the containers and images at a time """"
+			
+docker images -q -->  all the contianers ids
+docker images -q | xargs docker rmi--> to remove all the docker images.
+docker ps -q | xargs docker rm -f -->  to remove alll the running cotainers.
+________________________________________________________________________________________
+
+			"""" Creating custom image for depoyments """"
+			
+		1. docker run -dit ubuntu:18.0 /bin/bash
+		2. docker exec -it <ID> bash
+		3. apt install apache2
+		4. apt install net tools
+		5. apt install systemd --> systemctl status apache2
+		6. systemctl daemon-reload 
+		7. service apache2 status
+		8. service apache2 start
+		9. apt install wget
+	   10. apt install zip
+
+ craete a custom docker image for above one.
+ 
+	docker commit <ID> <Name given by user>
+_______________________________________________________________________________________________________________________
+
+		"" move the image across the enviornments ""
+		
+		docker login 
+		
+	1. CP the image to docker Hub
+		
+		docker tag <image_id> <docker_hub repository>
+		docker push <docker_hub repository>
+		
+		docker image rm <ID> <ID>
+		docker image rm -f <ID> --> for removing docker images
+		
+_________________________________________________________________________________________________________________________
+		
+	   docker history <image_id>
+	   docker inspect <img_id>
+	   docker image prune -a --> used to remove unused images
+	   docker d ubuntu:18.0 --> containers will created but not active.
+	   
+__________________________________________________________________________________________________________________________
+	  
+
+	   docker exec <id> kill <Pid> --> to kill the processes in a container.
+	   docker logs -f <id> or docker logs <ID>
+	   docker inspect <id> | grep -i restart -A 5 -B 5 --> 
+	   container restart policies you should aware
+	   
+	   docker run -dit --name passing-env -e a=ansible -e c=chef -e d=datadog ubuntu:18.0 bash --> to pass env variables
+		echo $a -- toprint env varibles
+		docker run -d -p 80:8080 --name  tomcat-expose-to-internet-one tomcat:8 --> to expose port to internet.
+_____________________________________________________________________________________________________________________________________	
+
+[10] 04-01-24
+	
+	restart policies : 
+	docker run -d --name always --restart always tomcat:8
+	docker run -d --name unless-stopped --restart unless-stopped tomcat:8
+	systemctl restart docker
+	Policies :
+		no(default)
+		always
+		unless-stopped
+		on failure
+		
+	enviornment variables :
+		developers give some app properties
+		docker run -d --name <name> -e=ansible -e b=bangalore tomcat:8 (-e used to inject enviornment variables)
+		
+	volumes : is a docker resource
+	docker resources : volume, images, networks, docker files, env variables, containers, compose, restart policies
+	components : client, engine, registry (components  which are running in background)
+	volume : used to presist/save the container data.
+________________________________________________________________________________________________________________________________________
+
+[11] 04-01-24 
+	
+	/var/lib/docker/volumes/ --> docker volume directory
+	docker run -dit -v redfox:/app ubuntu:16.04 /bin/bash --> -v refers docker volume 
+	docker exec -it 1b7 bash
+
+	docker volume ls
+	create docker volume 
+	docker volume rm <vol_name>
+	docker volume inspect <vol_name>
+	
+_____________________________________________________________________________________________________________________________________
+
+[12] 04-01-24
+
+	Network : used to isolate the containers from other networks.
+	types of networks : bridge(default driver), host, none/null
+	docker network create flipkart
+	apt-get install -y iputils-ping : ping <ip address> to connect other contianers present in same network.
+	apt install net-tools : ifconfig --> to know ip address of container.
+	
+	apt update && apt install net-tools --> to do two installations.
+	
+__________________________________________________________________________________________________________________________________
+
+[13] 04-01-24
+
+	docker run --dit --name <name> --network <network_name> ubuntu:18.04 /bin/bash
+	docker network connect <networkname> <another container ip address>
+	docker network disconnect <networkname> <another container ip address>
+	
+	Full Command: 
+
+docker run -d -i -t --name <custom_container_name> --network <network_name> -v <volume_name>:/app -e a=ansible --restart always ubuntu:16.04 bash 
+
+	docker rm -f 'docker ps -a -q'
+	docker rm -f $(docker ps -a -q) --> to remove all the containers.
+	docker rmi $(docker images -q) --> to remove all the images.
+	
+  docker full command 
+	docker run -d --name <custom_name> -p 80:8080 -e a=ansible --restart always --network <network name> -v <volume_name>:/app tomcat:8
+________________________________________________________________________________________________________________________________________
+
+[14] 04-01-24
+
+	dockerfile: set of instructions to build custom docker image.
+	manual creation of docker image from running container
+		docker commit -m "msg by user(optional)" <contain_id> <name by user> 
+	
+	docker build -t <default_name> . : to create docker image 
+	
+	inside a Docker file :  FROM ubuntu:16.04
+							RUN apt update && apt install wget zip tree net-tools -y
+							RUN mkdir /app && cd /app && touch a.txt b.txt c.txt
+
+							FROM ubuntu:16.04
+							RUN apt update && apt install wget zip tree net-tools -y
+							RUN mkdir /app
+							WORKDIR /app
+							CMD touch z.txt
+							
+							FROM tomcat:9
+							MAINTAINER sreenivas.g@samsung.com
+							LABEL Department=DevOps
+							EXPOSE 8080
+							ENV a=apple b=bangalore
+							WORKDIR /app
+							RUN apt update && apt -y install tree zip unzip tar net-tools
+							COPY SampleWebApp.war /usr/local/tomcat/webapps
+							ENTRYPOINT ["catalina.sh"]
+							CMD ["run"]
+______________________________________________________________________________________________________________________________________________
+
+[15] 04-01-24
+
+	docker images --filter "label=Department" 
+	copy: to add file from local machine to container.
+	add : to copy any remote files to container and it also do // zipped file and on the fly if you want to extract.
+	
+	Run : it will create a new layer (to install softwares)
+	CMD : 
+	
+	Docker : 
+		1. container tool
+		2. make sure not mmiss your configuration tools.
+		3. to utilize system resources
+		4. Build,run,ship is easy 
+
+
+

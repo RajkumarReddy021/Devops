@@ -1,0 +1,280 @@
+=================================
+Install docker using below commands ::
+apt update 
+sudo apt install docker.io -y
+systemctl status docker
+systemctl enable docker 
+docker version
+=====
+docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+How to create a container ?
+ex:  docker run -dit ubuntu:16.04 /bin/bash
+
+How to list the running containers?
+ex: docker ps
+
+How to list images present in local machine ?
+ex: docker images
+
+How to login to the container?
+ex: docker exec -it 45f26ee945c9 bash
+
+How to remove/delete a image?
+ex: docker rmi imagename/imageid
+
+How to remove/delete a container?
+ex: docker rm -f containerID/Name
+
+How to stop a running container?
+ex: docker stop containerID/Name
+
+How to list all(running/stopped/exited) the container?
+docker ps -a
+
+How to start the container ?
+docker start containerID/Name
+
+How to create a container with custom name?
+ex: docker run --name container-one -dit ubuntu:16.04 /bin/bash
+
+How to change the existig name for a container ?
+ex: docker rename friendly_jones container-two
+
+How to just pull a image from docker hub without creating a container?
+ex: docker pull ubuntu:22.04
+
+How to copy a war file from local machine to a container?
+ex: docker cp sample.war 45f26ee945c9:/usr/local/tomcat/webapps
+ex: docker cp a.txt first:/
+
+How to create a image from a running container?
+ex: docker commit 45f26ee945c9 custom_image
+
+How to list the docker images ?
+ex: docker images
+
+How to remove all the images present in local machine?
+ex: docker images -q | xargs docker rmi 
+
+How to remove all(stopped/running/paused) the containers present in local machine?
+ex: docker ps -a -q | xargs docker rm -f
+=====
+
+
+
+==================================
+
+Container Tool::::::
+- Docker      
+- ContainerD
+- RKT
+=============================================
+Physical server vs virtualization vs containers.
+Reference Link :::
+https://www.researchgate.net/figure/Bare-Metal-Virtual-Machine-and-Container-technology-The-diierence-in-physical-server_fig4_337971562
+
+==============================================
+Advantages when we Use Docker :::
+- Easy Build
+- Easy Shipping
+- Easy Run
+- make sure not to miss any configuration changes, changes are done in Build Phase.
+- docker targets to make changes in build phase not in run time environment.
+- with in minute we can deploy multiple containers.
+- easy Installation.
+
+==============================================
+DOcker Components :
+1. DOcker Client    - is used to recieve the commands/request from the user.
+2. DOcker Engine    -  is the actual component which do stuff in the backend.
+3. Docker registry  - host images. ex:a
+==============================================
+DOcker Object/Resources:
+Images
+containers
+volumes
+networks
+dockerfile
+==============================================
+Installation Steps:
+==============================================
+apt update 
+apt install docker.io -y
+==============================================
+Image commands ::::
+Image consists of app+dependencies+configurations/installations.
+stopped state of a container.
+if you want to move data from one location to other loaction we need to build a image.
+==============================================
+docker image list or docker images : is used to list the existing images
+example : docker image list 
+ex: docker images
+==============================================
+docker pull : is used to download a image from dockerhub to local machine.
+ex:docker pull tomcat:latest
+==============================================
+docker image rm/ docker rmi : is used to remove one or more images.
+example : docker rmi 6dd589e60602
+          docker image rm ubuntu:latest
+==============================================
+docker history : is used to check the history of the image
+ex: docker history 6dd589e60602
+==============================================
+docker inspect : is used to check the image information like os/architecture etc...
+ex:  docker inspect 6dd589e60602
+==============================================
+docker image prune : is used to remove unused images.
+ex: docker image prune  -a
+==============================================
+
+Containers::::  running state of an image which consists of app and it's dependencies.
+================================
+docker ps : is used to list only running containers.
+ex: docker ps
+================================
+docker ps -a : is used to list all the containers like running/stopped/exited
+ex: docker ps -a
+================================
+docker run : is used to run a container from official base image.
+ex: docker run -it --name container1 ubuntu:latest bash
+ -i : interactive
+ -t : terminal
+ -d : daemon/background
+ --name : custom name
+================================
+docker rm : is used to remove a container.
+ex: docker  rm  6dd589e60602
+ex: docker rm -f 6dd589e60602
+-f : forcefully removing
+================================
+docker stop : is used to stop the running containers.
+ex: docker stop 6dd589e60602
+================================
+docker start : is used to start the stopped containers.
+ex: docker start 6dd589e60602
+================================
+docker rename : is used to rename the existing containers.
+ex: docker rename container_one  flipkart_container1
+================================
+docker stats:  is used to check the containers cpu/Memory utilization
+ex: docker stats containername
+================================
+docker top : is used to check the processes running within the container.
+ex: docker top containername/containerid
+================================
+docker pause : is used to pause the container.
+ex: docker pause 6dd589e60602
+================================
+docker unpause : is used to unpause the running container
+ex: docker unpause 6dd589e60602
+================================
+docker restart : is used to restart the running containers
+ex: docker restart 6dd589e60602
+================================
+docker exec : is used to login to a  running container.
+ex: docker exec -it 6dd589e60602 bash
+ex: docker exec 6dd589e60602 ls /usr/local/tomcat/webapps    {This command is used to list the folders and files present in container without a login}
+================================
+docker cp : is used to copy a local file to a running container.
+ex: docker cp login.java 6dd589e60602:/
+================================
+docker logs : is used to check the running container events/logs.
+ex: docker logs 6dd589e60602
+==================================== 
+container full command:
+docker run -d --name flipkart_cont_1 --restart always -p 8080:8080 -e a:apple -e b:basket --net flipkart -v flipkart:/app tomcat:8 4
+
+=====================================================================================
+
+-d =  Daemon (run in background)
+--name =  provide a custom name
+--net =  custom network
+-v =  to persist the container's data
+-e =  custom app properties
+-p = expose your container app to outside world
+-restart = automatic restarts if something happens (no/on-failure/unless-stopped/always)
+================================
+restart policy :
+is used to restart/start the container if container get stopped.
+ex: docker run -d --name flipkart_cont_1 --restart always tomcat:8
+================================
+environment variables : are used for app properties, if i want to inject application properties dynamically while runtime we use -e flag.
+ex: docker run -d --name flipkart_cont_1  -e a=apple -e b=basket tomcat:8 
+================================
+volumes :::
+volumes are used to persist the data from container in local machine.
+commands ::::::::
+docker volume ls : is used to list the existing volumes
+ex: docker volume ls
+================================
+docker volume create : is used to create a new volume.
+ex: docker volume create flipkart
+================================
+docker volume rm : is used to remove one or more volumes.
+ex: docker volume rm flipkart
+================================	
+docker volume inspect : is used to  get the information of a volume.
+ex: docker volume inspect flipkart
+================================
+
+Networks :::::::::is used to isolated the containers from other networks.
+commands :
+
+Types of drivers/networks:
+- bridge: 
+it's a default network type
+while creating a network if you are not specifying --driver flag ur network will be created under bridge.
+this type of network will isolate resources present from one network to other.
+
+- host:
+you can create your network under host driver using --driver flag while you create network.
+example: docker run --name flipkart-host --network host ubuntu:16.04 bash
+
+- none/null:
+docker network ls : is used to list the existing networks.
+example: docker run --name flipkart-null --network null ubuntu:16.04 bash
+================================
+docker network create :: is used to create a new network.
+ex: docket network create flipkart
+================================
+docker network rm : is used to remove one or more networks.
+ex: docker network rm flipkart
+================================
+docker network inspect : is used to get the info about a network.
+ex: docker network inspect flipkart
+================================
+docker network connect : is used to connect a container from other network.
+ex: docker network connect networkname flipkart-container.
+================================
+docker network disconnect : is used to disconnect a container from the network.
+ex: docker network disconnect networkname flipkart-container.
+================================
+How to remove all the containers at a time without passing container IDs?
+ex: docker rm -f $(docker ps -a -q)
+================================
+How to remove all the images at a time without passing image IDs?
+ex: docker rmi $(docker images -q)
+================================
+docker full command:
+docker run -d --name tomcat -p 80:8080 -e a=ansible --restart always --network flipkart -v flipkart:/app tomcat:8 
+
+
+Dockerfile :::::
+FROM tomcat:9
+MAINTAINER sreenivas.g@samsung.com
+LABEL Department=DevOps
+EXPOSE 8080
+ENV a=apple b=bangalore
+WORKDIR /app
+RUN apt update && apt -y install tree zip unzip tar net-tools
+COPY SampleWebApp.war /usr/local/tomcat/webapps
+ENTRYPOINT ["catalina.sh"]
+CMD ["run"]
+================================
+Dockerfile Reference::::::https://kapeli.com/cheat_sheets/Dockerfile.docset/Contents/Resources/Documents/index
+================================
+
+
+
+
+

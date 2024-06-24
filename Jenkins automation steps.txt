@@ -1,0 +1,138 @@
+####   How to automate the clone, build and push to bucket using jenkins?
+
+1.Pre-Requisites: 8gb Ram + 100 gb disk space + install jdk in a server
+
+2.apt update & then  apt install default-jdk 
+
+3. ------jenkins installation--------------- 
+
+go to jenkins.io to know the installation steps and then install jenkins
+  
+sudo apt-get update
+sudo apt-get install jenkins
+
+service jenkins status
+service jenkins stop
+service jenkins start
+service jenkins restart
+service ssh status
+systemctl --type=service : used to know the services running in the system.
+
+jenkins --version : is used to check the jenkin installed version !
+
+after installation jenkins user is created. switch to jenkins user
+
+jenkins : /var/lib/jenkins 
+cat /etc/passwd	: used to check the jenkins user is created or not.
+
+
+curl ifconfig.me : used to get the public IP address to check jenkins is running or not in internet
+cat /var/lib/jenkins/secrets/initialAdminPassword : administrator password to login jenkins.
+______________________________________________________________________________________________________________________________
+
+
+####  Clone from git to server:
+
+1. create project and then add a git details under source code management section with repository url and token in place of password.
+
+2. Then click build now and workspace folder will created in the server contains git repository files (clone done successfully).
+
+____________________________________________________________________________________________________________________________
+
+
+#### Build the Artifact :
+
+1.  Dashboard ---> tools ----> install a maven in console.
+2.  configure the maven in a project and enter goals under build steps section and click build-now.
+3.  Target folder it contains artifact will created underworkspace in server.
+
+__________________________________________________________________________________________________________________________________
+ 
+#### Upload artifact to the S3 Bucket
+
+1. install Aws in the server -- apt install awscli.
+2. After installation switch to jenkins user (su - jenkins ) and configure aws (aws configure add acceskey).
+3. under buils-steps section add exceute shell run the below command in that.
+4. aws s3 cp target/projectk.war s3://demobucket045/projectk/projectk-$BUILD_NUMBER.war -- command for copying file from target(server) folder to s3 bucket.
+
+then build triggers.(pom)
+	    
+_________________________________________________________________________________________________________________________________
+
+#### Continous Deployment (Perform Tasks under deployment server)
+
+1. install java : apt install default-jdk
+2. install tomcat ---> tomcat.apache.org copy the version required and copy it on server.
+	2.1 wget <url> --> it will download the tomcat in zip or tar file.
+	2.2 unzip using cmd : tar -zxvf <file name>.
+
+3. Go to bin folder and start tomcat : ./startup.sh
+4. netstat -lntup : to check the open ports
+	apt install net-tools.
+5. curl ifconfig.me : To know the tomcat ip address and copy it and check in internet working or not.
+6. chown -R ubuntu:root
+
+7. install awscli and add aws credentials in the server.
+8. download the file from aws s3 into tomcat webapps folder for deployment.
+9. Check the console deployment is successful or not.
+	
+_________________________________________________________ Automation _______________________________________________________
+
+1. in the jenkins add a remote ssh unser manage. 
+2. add the credentials to the remote machine and copy the key in it.
+3. In the created job add exceute commands using ssh and run the commands in jenkins to copy file from aws s3 to tomcat web apps folder.
+______________________________________________________________________________________________________________________________
+
+####Continous INtegration 
+Setup in Buils_server:-
+
+Server Requirements : 8 gb ram and 100 gb disk space.
+1.install java : apt install default-jdk
+
+2.intall jenkins : follow the steps mentioned in jenkins.io.
+		/var/lib/jenkins --> jenkins user directory
+
+3. curl ifconfig.me : To know the public ip address and copy it check jenkin is running in internet or not.
+	systemctl --type=services --> to know how many services running in the server (like task manager).
+
+4. Log into jenkins console  
+	4.1 Create first job and add git credentials under source code management section (to clone code from git hub).
+	
+5. Code is clone from git and maven is required to make an artifact.
+	5.1 under manage jenkins add maven tool under tools.
+	5.2 select the tool version and apply
+	5.3 open the job we created and mention the installed mvn in it.
+6. Run build now an artifact will created under target folder in the server.
+
+7. upoad an artifact to Aws s3 bucket.(Manual method)
+
+1. install aws s3 in the server : apt install awscli 
+2. add aws s3 credentials : configure aws
+3. cp the .war files to the bucket.
+
+8. Automation for copying files from server to aws s3 using jenkins.
+
+	8.1 open the job created in jenkins under build-steps add Exceute shell run the commands in shell for copiyng file.
+		Ex: aws s3 cp target/project01.war s3://practicebucket001/project01/project$BUILD_NUMBER.war
+	8.2 click on buils -now then artifact will copy to the s3 bucket.
+
+__________________________________________ Continous Integration Completed (Automation Method)___________________________________________________________
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

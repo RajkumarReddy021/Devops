@@ -39,3 +39,19 @@
 | default   | my-service |          80 | http://192.168.49.2:31718 |
 |-----------|------------|-------------|---------------------------|
 
+
+19. /[string] : to check string in a file (N allows to check all the occurences of string)
+20. find . -name "**config**" : to check the folder or file.
+
+
+
+
+
+
+
+
+
+
+
+
+

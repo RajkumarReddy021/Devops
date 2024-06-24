@@ -1,0 +1,303 @@
+===================================
+AWS - Amazon Web Service - Cloud
+===================================
+ON_PREMISE:  we manage
+1. Network
+2. Hardware
+3. operating system
+4. Middle ware
+5. Run Time
+6. Data
+7. Application
+
+
+
+CLoud : IAAS (Infrastructure as aservice)
+AWS Manages 1. Network    
+            2. Hardware
+			3. Storage
+		   
+		   
+We Manage :  
+1. OS
+2. Middle ware  
+3. RunTime
+4. Data
+5. Application 	   
+
+
+PAAS (platform as a Service)
+We manage : 
+1. Application .
+Remainig stuff will be managed by aws.
+
+
+
+SAAS:  Software as a service 
+COmplete Stuff is managed by aws 
+
+============================
+============================
+enable : MFA :  refer this blog ::: https://k21academy.com/amazon-web-services/aws-multi-factor-authentication-mfa/
+============================
+aws configure -   is used to configure cli to access aws services.
+aws configure list : is used to list the existing configured credentials.
+ex: access keys, secret keys, region ..
+
+==============================================================================
+IAM :  Identity and Access Management
+Users : You can attach permissions to a individual/particular user to access aws services.
+----------------------------------------------------------------------------------------------------
+Groups : Instead of providing permissions to every individual/particular User you can create a group and attach policies to it and assign users to groups.
+----------------------------------------------------------------------------------------------------
+Policies:   is nothing but permissions.
+----------------------------------------------------------------------------------------------------
+Roles:   if i want to communication between two aws services then we create roles.
+----------------------------------------------------------------------------------------------------
+MFA : MultiFactor Authentication :   second layer of security.
+Reference: To configure MFA
+https://k21academy.com/amazon-web-services/aws-multi-factor-authentication-mfa/	
+
+================================
+AWS CLI - IAM ::::::::
+aws iam list-users : is used to list the existing users.
+ex: aws iam list-users
+------------------------------------------------
+aws iam create-user: is used to create a user.
+ex: aws iam create-user --user-name awscli-user-one
+------------------------------------------------
+aws iam delete-user: is used to delete an existing user.
+ex: aws iam delete-user --user-name  "awscli-first-user"
+------------------------------------------------
+aws iam update-user: is used to update the name of a existing user.
+ex: aws iam update-user --user-name awscli-user-one --new-user-name awscli-user-01
+------------------------------------------------
+aws iam list-policies: is used to list the existing policies.
+ex: aws iam list-policies | grep -i ec2full
+------------------------------------------------
+aws iam attach-user-policy: is used to attach/grant permssion to user.
+ex: aws iam attach-user-policy  --user-name awscli-user-01 --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess
+------------------------------------------------
+aws iam list-attached-user-policies: is used to list all policies attached to a user
+ex: aws iam list-attached-user-policies --user-name awscli-user-01
+------------------------------------------------
+aws iam create-group: is used to create a group
+ex: aws iam create-group --group-name Admins
+------------------------------------------------
+aws iam list-groups: is used to list the existing groups.
+ex: aws iam list-groups
+------------------------------------------------
+aws iam delete-group: is used to delete existing group.
+ex: aws iam delete-group --group-name Admins
+------------------------------------------------
+aws iam create-role: is used to create a role
+aws iam create-role --role-name Test-Role --assume-role-policy-document file://ec2fullaccess.json
+
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Principal": {"Service": "ec2.amazonaws.com"},
+    "Action": "sts:AssumeRole"
+  }
+}
+------------------------------------------------
+aws iam list-roles: is used to list the roles
+ex: aws iam list-roles
+------------------------------------------------
+aws iam delete-role: is used to delete the role
+ex: aws iam delete-role  --role-name Test-Role
+==============================================
+VPC :::::: Virtual private Cloud.
+CIDR : classless Inter Domain Routing
+IPADDRESS Calculator:
+https://www.ipaddressguide.com/cidr
+
+0.0.0.0/0   ------   10.10.0.0/16 - vpc  ----------------------------  255.255.255.255/32
+
+VPC : 
+Subnet1/subnet2/subnet3
+public subnet :  subnet connected to IGW is a public subnet
+Private Subnet:  subnet not connected to IGW  is a private subnet.
+
+How do you enable outbound traffic to a private subnet machine.?
+Create NAT Gateway and associate with public subnet.
+Create one more routetable and route the traffic to nat gateway then outboubd traffic will be allowed.
+
+Example :   Create an instance in particular VPC.
+aws ec2 run-instances --image-id ami-0a6b2839d44d781b2 --count 1 --instance-type t2.micro --key-name linux-OS  --subnet-id subnet-07a95ebc0af19db4a --associate-public-ip-address
+
+example :  stop an instance.
+aws ec2 stop-instances --instance-ids i-01429b47d1c9883c8
+
+example :  start an instance.
+aws ec2 start-instances --instance-ids i-01429b47d1c9883c8
+
+==============================================
+we have two vpc called snapdeal and flipkart , how do you  make private connection?
+By using peering connection.
+Requester :  snapdeal (11.11.0.0/16)
+Accepeter: flipkart (10.10.0.0/16)
+
+Go to Snapdeal Routetable and make route from 10.10.0.0/16 (flipkart) :::: px-flipk-snapdeal-peer
+Go to flipkart routetable and make route from 11.11.0.0/16 (snapdeal) :::: px-flipk-snapdeal-peer
+
+=========
+Elastic/Static IP/Reserved IP:
+if i want to login to a machine which doesnt have public IP ? or if i stop and start public IP should not change?
+Sol:  ELastic IP Address.
+
+============================================================================================
+Security Group :
+- An Instance Firewall (allow)
+- using SG we cant deny any source, we can allow a particular port and source , remaining will be blocked automatocally.
+============================================================================================
+EC2:  
+
+Instance Types :
+1. General Purpose :
+- M5 Type series machines:
+-- Small and midsize databases
+-- Enterprise application (Paid apps)
+-- Gaming
+-- High Performance Computing 
+-- cache server (Redis)
+-- Application Server 
+
+- T type Series machines (Burstable Performance Instances):
+-- CPU Performance 
+
+-- Whenever your workload required higher performnace it can reach upto Higher Level.
+-- code repositories
+-- dev/qa/uat/staging
+-- web applications/website
+
+
+2. Compute Optimized :
+- C Type Series Machines :::
+-- Machine learning
+-- Batch processing workloads
+-- High-performance web servers
+
+
+
+3. Memory Optimized :
+- R/X/Z Type Series Machines.
+-- Suitable for Memory based apps
+--  databases like mysql, dynamodb
+-- Inmemory key value stores like redis & memcached
+
+
+4. Storage Optimized : input/output operation per second dhould be low latency.
+- D/H/I Type Series Machines.
+-- They are optimized to deliver tens of thousands of low-latency, random I/O operations per second (IOPS) to applications. 
+-- Hadoop 
+-- Suitable for log processing/data processing apps 
+
+5. Accelerated Optimized : Uded for Gaming Apps
+- G/P/VT1/DL1 Type Series Machines.
+- Suitable for Gaming apps.
+
+
+
+EBS Volume Types:
+1. SSD (Solid state Drive):::: 
+- you can use this volumes as a Bootup devices.
+- General purpose : gp2 & gp3
+--suitable for low latency / volume size less than 16TiB
+
+- Provisioned IOPS : io1 & io2
+-- suitable for sub milli second latency / volume size more than 16TiB
+
+2. HDD (Hard Disk Drive)::::: (st1/sc1)
+- you cannot use this volume type as a bootup/root devices.
+- suitable for Big data/log processing.
+- required a big size volumes then we can choose st1/sc1 (ex: more than 125GiB)
+
+
+=============================================
+Instance Launch Types:
+Reference Link : https://pmsquare.com/analytics-blog/2020/12/6/aws-ec2-launch-types
+
+on-demand:
+- Suitable for Online Retail store applications./small size data bases/ web servers/application servers.
+- per second billing.
+
+
+reserved:
+- suitable for Long running applications.
+- we can minimize the biilling.
+Ex: DataBases - long running upto 3 years.
+
+scheduled reserved:
+- suitable for long running applications but instances will be created based up on schedule.
+- minimum billing compared with on demand.
+
+spot instances:
+- suitable for temporary data/apps, unpersistent  data can be store in this machines.
+- aws will terminate according to bid. they notify and terminate the machine when bid increase.
+
+dedicated instances:
+- Dedicated instances ensure that no other AWS customer shares the same hardware as you.
+
+dedicated hosts:
+- Dedicated hosts allow you to book an entire physical server and control the placement of the instance.
+
+=============================================
+Elastic IP : Static IP
+-  You can allocate Elastic IP to instance which doesnt have public IP.
+-  free of cost when instance is running for EIP.
+-  if EIP is ideal then billing will be calculated for EIP.
+-  Even Though instance is stopped and started EIP will not get changed.
+=============================================
+Install a web server in ec2 machine :
+- ami/instance type/network/storage/securitygroup/labels etc......
+
+Webserver:  is used to serve the static context
+ex: html/css/images etc......
+ex: nginx or apache2
+steps :
+apt update 
+apt install apache2 -y 
+apache2 -version
+ps -ef | grep apache
+service apache2 status 
+apt install net-tools -y
+netstat -lntup | grep apac
+
+uninstall apache2:
+apt purge apache2
+apt auto-remove
+
+=========================
+Install nginx :
+apt update
+apt install nginx -y
+nginx -v  :  is used to check the version
+ps -ef | grep -i nginx
+
+Uninstall:
+service nginx stop
+apt purge nginx
+apt auto-remove
+=========================
+Launch Template : is a template will have all configurations to create/launch the instance.
+ex:
+AMI/Instance Type/ Storage/network/userdata/tags etc....
+
+with less manual intervention we can launch the instances with out any configurations.
+=========================
+
+
+
+
+
+
+
+
+
+
+
+
+
+

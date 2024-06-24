@@ -1,0 +1,535 @@
+Kubernetes ::::: COntainer Orchestration Tool ::::
+=================================
+If  i want to deploy my container application in multiple machines, k8s comes into picture.
+
+Difference between k8s and docker swarm.
+
+Docker Swarm :
+- installion : easy
+- monitorinig : there is no in built mechanism, we should install third-party tools (portainer).
+- Load Balancing: automatic.
+- Auto scaling: there is no auto scaling support.
+- scaling: seven times faster than other orchestration tools (k8s)
+- security : only supports TLS.
+
+
+Kubernetes :
+- installion : Complex
+- monitorinig : there is  in build mechanism, we should enable it.
+- Load Balancing: no automatic.
+- Auto scaling: there is auto scaling support.
+- scaling: slow comparing with docker swarm.
+- security : supports RBAC/TLS/SSL/Secrets/Network Policies.
+=================================
+Architecture of k8s :
+There are two components like:
+1. COntrol Plane 
+2. Worker plane
+
+1. Control plane is classified into :
+apiserver: is responsible to recieve the requests from clients (kubectl). api server is a front end gate for k8s.
+etcd : in-memory database for kuberenetes (stores pod/node & all k8s resource information.)
+controller manager : is responsible to monitor/notice the worker nodes/pods and inform the apiserver if it goes down.
+scheduler : is resposible to assign a pod into available worker node.
+
+2. Worker plane :
+classified into 3 :
+kubelet : is responsible for recieving the workload from control plane.
+
+container Engine : is responsible to create a container in node.
+
+kube-proxy : is responsible to create IP/port/traffic etc.
+
+========================================
+Install software in k8sclient machine :
+apt update 
+apt install awscli -y 
+
+aws --version : to calidate the awscli version
+
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.22.17/2023-01-30/bin/linux/amd64/kubectl
+
+chmod +x kubectl
+mv kubectl /usr/bin
+kubectl version : is used to check the kubectl version number.
+
+aws configure  : provide access-key/secretkey/region
+============
+aws eks update-kubeconfig: will update kubeconfig file from aws eks service.
+ex:
+aws eks update-kubeconfig --name sreenidevops-cluster1 --region ap-south-1
+============
+kubectl get no : is used to list the number of nodes present/running
+ex: kubectl get no 
+============
+kubectl get po  : is used to get the pods
+ex: kubectl get po 
+============
+kubectl apply : is used to create a pod using yaml file
+ex: kubectl apply -f single.yaml
+============
+kubectl delete : is used to delete a pod using yaml/manually.
+ex: kubectl delete -f single.yaml
+ex: kubectl delete po podname
+============
+Task : if  i want to remove all the pods running in the cluster.
+ex: kubectl delete po --all
+============
+
+
+GITHUB Reference for Yaml files :  https://github.com/sreenidevopsgroup9/kubernetes/tree/master/pod
+
+========================================
+pod related commands:
+=================================
+kubectl get : is used to list the pods.
+ex: kubectl get po 
+ex: kubectl get po -n kube-system
+=================================
+kubectl run : is used to create a pod.
+ex: kubectl run nginx --image nginx
+=================================
+kubectl delete : is used to delete a  pod
+ex: kubectl delete po nginx
+=================================
+yaml file for pod:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  - name: tomcat
+    image: tomcat:8  
+=================================
+kubectl apply : is used to run a pos using a template.
+ex: kubectl āpply -f pod.yaml
+=================================
+kubectl describe : is used to inspect the pod.
+ex: kubectl describe po nginx 
+=================================
+kubectl delete -f : is used to delete a pod/resource using template.
+ex: kubectl delete -f pod.yaml
+=================================
+how to generate a yaml file using commands ?
+ex: kubectl run nginx --image --dry-run=client -o yaml > pod.yaml
+=================================
+kubectl explain : this command  explain about pod.
+ex: kubectl explain pod
+=================================
+kubectl api-resources : is used to check the resources present in k8s.
+=================================
+kubectl create ns : is used to create a namespace.
+ex: kubectl create ns flipkart
+=================================
+kubectl delete ns : is used to delete a namespace.
+ex: kubectl delete ns flipkart
+=================================
+kubectl describe ns : is used to inspect a namespace
+ex: kubectl describe ns flipkart
+=================================
+service : is used to expose your application to the out side world/with in the cluster.
+service have classified into 3 types:
+1. ClusterIP : only expose the application internally, cant access from outside.
+2. NodePort : expose application to outside world, should access with random port number.
+3. LoadBalancer : expose application to outside world, can access with DNS/Single name.
+
+=================================
+
+install softwares in clinet machine::::
+apt update 
+apt install awscli -y
+aws --version
+curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.20.15/2022-10-31/bin/linux/amd64/kubectl
+chmod +x kubectl
+mv kubectl /usr/bin
+kubectl version
+=================================
+aws configure :  provide accesskey and secret access and region.
+aws eks list-clusters
+aws eks update-kubeconfig --name ekscluster1
+
+=================================
+ReplicaSet: is used to monitor your pod and maintain desired number of pods, it will make sure to  maintain actaul number of pods is equal to given number of pods.
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: first-replicaset  
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+        a: america
+  template:
+    metadata:
+      labels:
+        a: america
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+=================================
+kubectl get rs : is used to list the replicaset
+ex: kubectl get rs
+=====
+kubectl delete rs : is used to delete the replicaset.
+Ex: kubectl delete rs first-replicaset
+=====
+kubectl scale : is used to scale replica count to given number of pods.
+example:
+kubectl scale rs first-replicaset   --replicas 20
+=================================
+Deployment : is used to manage the replicaset with deployment strategy, we no need to rollout the pods that will be taken care by deployment with any downtime.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-replicaset
+  namespace: default
+spec:
+  strategy:
+    rollingUpdate:
+     maxSurge: 25%
+     maxUnavailable: 25%
+  replicas: 4
+  selector:
+    matchLabels:
+        a: america
+  template:
+    metadata:
+      labels:
+        a: america
+    spec:
+      containers:
+      - name: nginx
+        image: httpd
+=================================
+Note : deploy yaml using kubectl apply -f 
+=================================
+Service : is used to expose app to outside world or with in the cluster.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  type: LoadBalancer
+  selector:
+    a: america
+  ports:
+    - protocol: TCP
+      port: 80
+=================================
+delete commands :
+kubectl delete deploy <deploymentname>
+kubectl delete svc <servicename>
+kubectl delete -f <yamlfilename>  (is used to delete using the yaml file.)
+=================================
+Pod Lifecycle :
+1. Pending
+2. Running
+3. Succeeded
+4. Failed
+5. Unknown
+
+Container State :
+1. Waiting
+2. Running
+3. Terminated.
+=================================
+kind: Service
+apiVersion: v1
+metadata:
+  name: second-service
+  namespace: default
+  labels:
+    a: america
+spec:
+  type: ClusterIP
+  selector:
+    a: america
+  ports:
+    name: http-port
+    port: 
+    - 80
+    targetPort: 80
+    nodePort: 32332	
+=================================
+ConfigMaps :::
+a=america
+b=bangalore
+command to create a configmap :::
+ex: kubectl create cm firstcm --from-literal=a=america --from-literal=b=bangalore 
+
+command to create  a yaml :
+ex: kubectl create cm firstcm --from-literal=a=america --from-literal=b=bangalore --dry-run=client -o yaml > cm.yaml
+=====
+envfrom concept :  In This concept if you add any environment varibles we need to restart/recreate the pods.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    envFrom:
+	- configMapRef:
+	    name: firstcm
+========		
+apiVersion: v1
+data:
+  a: america
+  b: bangalore
+  c: cannada
+  de: delhi
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: firstcm
+=================================
+
+VolumeMount Concept :::: In This concept if you add any new environment varibles , no need to reload/recreate a pod.
+=================================
+
+Yaml ::::
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+      - name: firstcm
+        mountPath: /etc/config
+  volumes:
+    - name: firstcm
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: firstcm
+========		
+apiVersion: v1
+data:
+  a: america
+  b: bangalore
+  c: cannada
+  de: delhi
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: firstcm
+=================================
+secret : is used  for confidential data. If we have passwords/sshkeys/apitokens, data should be encoded. In that scenario we can choose secret object.
+
+ex: kubectl create secret generic first-secret --from-literal=username=admin --from-literal=password=admin@123 --dry-run=client -o yaml > secret.yaml
+
+ex: kubectl apply -f secret.yaml (to apply the changes)
+=================================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+    envFrom:
+    - secretRef:
+        name: first-secret
+=================================		
+		
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2	
+    ports:
+    - containerPort: 80
+    volumeMounts:
+      - name: first-secret-using-vol
+        mountPath: /app
+
+  volumes:
+  - name: first-secret-using-vol
+    secret:
+      secretName: first-secret
+=================================
+Persistent Volume : Method to create volumes manually according to requirement.
+Two methods : 
+1. Hostpath : which save data in HOstmachine/workermachine.
+disadv: if workermachine is terminated then data present in workermachine is lost.
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: first-pv
+  namespace: default
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+=================================
+pvc : is used to claim the available pv.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+=================================
+pod.yaml:::::
+=============
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  nodeName: ip-172-31-13-255.ec2.internal
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+    - mountPath: "/usr/share/nginx/html"
+      name: first-vol
+  volumes:
+  - name: first-vol
+    persistentVolumeClaim:
+      claimName: task-pv-claim
+
+==========================================================
+==========================================================
+==========================================================
+awsElasticBlockStore persistent Volume: we can backup data in ebs volume. if workernode is terminates also we can restore from ebs volume.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: nginx-ebs
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+    - mountPath: "/usr/share/nginx/html"
+      name: first-vol
+  volumes:
+  - name: first-vol
+    persistentVolumeClaim:
+      claimName: task-pv-claim-ebs
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: first-pv-ebs
+  namespace: default
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: "vol-0cae0e88856dc28a2"
+    fsType: ext4
+---	
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim-ebs
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+===============================================
+Storageclass: is used for dynamic provisioning the volumes in aws cloud.
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-18gb
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 18Gi
+==========================================	  
+Namespace: is used to isolate the objects or resources from other projects/environments.
+
+kubectl get ns  : is used to list the existing namespaces.
+ex: kubectl get ns
+==========================================
+kubectl create ns :  is used to create a new namespace.
+ex: kubectl create ns flipkart
+==========================================
+kubectl delete ns : is used to delete an existing namespace.
+ex: kubectl delete ns flipkart
+==========================================
+kubectl describe ns : is used to display the information related to namespace.
+ex: kubectl describe ns flipkart
+==========================================
+deploy a pod in flipkart namespace?
+kubectl  run nginx --image nginx -n flipkart.
+==========================================
+
+==========================================
+kubectl config ::::::: is used to manage the kubeconfig file.
+kubectl config view : is used to view the config file.
+
+==========================================
+If you want deploy metric server ::::::run below command ::::::::
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+ex: 
+root@k8s-client:/home/ubuntu/kubernetes/sc# kubectl top po
+NAME    CPU(cores)   MEMORY(bytes)
+nginx   0m           3Mi
+
+
+0m = 0 millicpu
+3Mi - 3 mebibytes
+
+=========================
+
+
+	
+    
+    
+    
+	
+	
+	 
+

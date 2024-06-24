@@ -1,0 +1,285 @@
+	Ubuntu Linux Operating System:
+
+Benefit :
+speed
+secure  
+consume less size.
+
+Commands :
+ls :  is used for list the files and folders present in current directory/folder.
+ex: ls -l or ls or ls -la
+
+
+mkdir : is used to create a directory, if not present.
+ex: mkdir first-dir
+ex: mkdir -p first-dir
+
+touch : is used to create a file.
+ex: touch a.txt 
+
+tree : is used to display the directory structure.
+ex: tree /home
+
+rm : is used to remove a directory.
+ex: rm -r first-dir
+ex: rm a.txt (Only rm can remove file not directory)
+
+cd (change the directory): is used to change the directory.
+ex: cd first-dir
+ex: cd ..  (is used to come backward /  one folder backward)
+
+pwd : is used for checking the current directory.
+ex: pwd
+
+watch : is used to watch the given command.
+ex: watch ls -l
+ex: watch -n 0.1 ls -l
+
+whoami: is used to check and display the logged in user
+ex: whoami
+
+sudo su : is used to switch to root user.
+
+su ubuntu :  is used to switch to ubuntu user.
+=========================================================================================================
+lscpu : is used to check the installed cpu.
+ex: lscpu
+================
+free :  is used to check the installed Memory.
+ex: free -h
+================
+df : is used to check the installed hard drive/disk space.
+ex: df -h
+================
+vi : is the editor which is used to write/edit the the content in a file.
+ex: vi a.txt 
+Options::::::  w - save | q - quit | Esc - to send backend Mode | i - to bring Insert Mode.
+================
+cat : is used to print the data/content in a file.
+ex: cat a.txt 
+ex: cat -n a.txt 
+================
+grep : is used to print the line, if matches a given string.
+ex: grep "string" a.txt 
+ex: grep -v "string" a.txt 
+ex: grep -w "string" a.txt 
+ex: grep -E "Kerala|Hyderabad" a.txt
+Options : -v : exclude | -w : exact word | -i : it might be capital/small letters.
+================
+tac : is used for printing the content in a file in reverse order.
+ex: tac a.txt 
+================
+wc : is used to check the lines/words/characters present in a file.
+ex: wc -l
+ex: wc -c
+ex: wc -w
+================
+head : is the command which print specific number of lines from top in a file.
+ex: head -n 3 a.txt
+================
+tail : is the command which print specific number of lines from bottom in a file.
+ex: tail -n 3 a.txt
+================
+How to print a specific line in a file?
+ans :  sed -n 4p a.txt or head -n 4 a.txt | tail -n 1
+================
+sed : is used for replace a string in a file.
+ex: sed -i 's/Hyderabad/Telangana/g'  a.txt 
+ex: sed -n 1p a.txt 
+================
+du : is used to check the size of a file or a folder.
+ex: du -h login.txt
+ex: du -h testdir
+================
+cat /etc/os-release : is used to check the OS/version/spec-os-level
+ex: lsb_release -a or cat /etc/os-release.
+================
+tar : tar is used to compress the directory into a tar extensed file.
+ex: tar -cvf testdir.tar testdir   (cvf : create verbose file)
+ex: tar -xvf testdir.tar   (xvf : xtract versbose file)
+===========
+apt : is a package a manager used to update and install softwares in ubuntu machine.
+ex: apt update or apt install zip 
+===========
+zip :is used to compress a directory into a zip file.
+ex: zip -r testdir.zip testdir  (r: recursively)
+===========
+unzip :  is used to extract a zip file.
+ex: unzip testdir.zip
+===========
+ping : is used to check the internet connection .
+ex:  ping google.com
+===========
+wget : is used to download files from internet.
+ex: wget https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+===========
+
+Linux Standard Directory Structure:
+Reference:  https://www.thegeekstuff.com/2010/09/linux-file-system-structure/
+
+/  :   mount point /  ..,,,not /root
+
+/root :  administrator home directory 
+
+/home:    every individual user will have their home folder in /home.
+
+/etc:  cointains configuration files.
+
+/opt:  store third party apps
+
+/var: store logs 
+
+
+/bin: stores binaries  (first level) 
+
+
+/sbin:  stores system binaries.
+
+
+/usr:  stores second level programs/binaries 
+
+
+/lib: stores  packages (so/jar)
+
+/tmp : is used to store temporary work 
+==========
+
+OSI (Open System Interconnections):
+1. Physical Layer
+2. Data Layer
+3. Network Layer
+4. Transport Layer
+5. Session
+6. presentation
+7. Application.
+===========
+uname: is used to check the kernel version/base os version.
+ex: uname -a 
+===========
+echo : is used to print given data.
+ex: echo bangalore
+===========
+rev : is used to print the data in reverse order.
+ex: echo bangalore | rev 
+===========
+useradd : is used to create a new user in linux os.
+ex: useradd -m user1
+    useradd -m -s /bin/bash user1 --> used to execute the commands in the given specified(/bin/bash) shell used by user1.s
+===========
+userdel : is used to delete existing user.
+ex: userdel -r user1
+===========
+id : is used to check the identity of a user.
+ex: id user1
+===========
+chmod : is used to change the permission on existing file/folder.
+ex: chmod u=rwx,g=rwx,o=rwx b.txt 
+ex:  chmod u+r,g+w,o+x b.txt 
+ex: chmod u-x,g-x,o-x b.txt 
+r : read
+w: write
+x :  execute
+
+u: owner
+g: group
+o: others
+===========
+groupadd : is used to create a group.
+ex: groupadd development
+cat /etc/group --> used to know the group is created or not.
+cat /etc/group | grep -i group_name --> used to know the group is created with group mentioned in it.
+cat /etc/group | grep -iw group_name. 
+cat /etc/group | grep -iwE 'group_name1|group_name2' --> used to know the entered groups are created or not.		
+============================================
+groupdel : is used to delete the existing group.
+ex: groupdel development
+============================================
+usermod : is used to add a user to a group.
+ex: usermod -a -G dev user1
+============================================
+chown : is used to change the ownership to existing file/folder.
+ex: chown -R <owner>:<group> b.txt 
+ex:  chown -R root:development b.txt 
+-R : Recursively.	
+============================================
+what is /etc/passwd?
+which store user entries.whenever we  run useradd command it register entry in passwd file present in /etc folder.
+
+what is /etc/group?
+which store group entries, whenever we  run groupadd command it register entry in group file present in /etc folder.
+
+===========================================================================================
+21.	 /etc /passwd  stores user related information.
+22.	 tail -f/etc/passwd  -f is used to float the data or used to look at growing data.
+23.	 ls | wc -l  used to count word
+======================================================================================
+
+How to list only directories in current path?
+ex: ls -ld */ 
+
+How to list Only files without directories in current path ?
+ex: ls -l | grep '^-'
+ex: ls -l *.*
+ex: ls -l */
+======================================================================================
+How to Install apache2 webserver in ubuntu machine ?
+apt update
+apt install apache2 -y
+
+======================================================================================
+awk : is used for breaking the columns.
+ex: awk '{print $1}' b.txt 
+ex: awk '{print $NF}' b.txt 
+ex: ls -l | awk '{print $NF}' | tail -n 1
+======================================================================================
+How to list the all services running in ubuntu linux machine ?
+ex: systemctl --type=service 
+ex: systemctl --type=service | grep -i ssh
+======================================================================================
+ps : is used to check the process running or not.
+ex: ps -ef | grep -i ssh
+ex: ps -ef | grep -i apache2
+======================================================================================
+netstat : is used to list the Port numbers. 
+ex: netstat -lntup
+======================================================================================
+How to enable login in linux os for other users ?
+cd /etc/ssh/
+vi sshd_config
+Replace or modify below lines:::::
+#PermitRootLogin Prohibited   --->>> PermitRootLogin yes
+
+#PasswordAuthentication no     ----->>>  PasswordAuthentication yes
+   
+ADD below line:::::::
+AllowUsers ubuntu root loginuser1
+======================================================================================
+to effect the changes , need to reload the ssh service.
+service ssh reload.
+======================================================================================
+tree : is used to show the directory structure.
+ex:  tree 
+root@ip-address:/home/ubuntu# tree
+.
+├── a.txt
+├── firstdir
+│   └── firstdirsub1
+│       └── firstdirsub2
+└── seconddir
+    └── sub1
+        └── sub2
+            └── sub3
+
+7 directories, 1 file
+======================================================================================
+tail -f /etc/passwd
+grep -iw dev --> to find exact word
+cat /etc/group | grep -iwE 'dev|qa'
+rev --help
+find . -name "**config**"-----> to find the directory
+:/security --> to find given the content in vi mode
+history
+useradd -m -s /bin/bash <user_name>
+usermod -a user1 -G dev
+
+

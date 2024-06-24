@@ -1,0 +1,594 @@
+
+Docker VS Kubernetes
+
+	K8 depends on YAML files
+	
+	1. Single Host : By default K8 is cluster(Group of nodes)master / Nodes.
+	   if any container affected by another container K8 put that contianer in another machine.
+	   
+	2. Auto Scaling: For load management if container.
+		if load on the container increases automatically it spin up replica of the containers.
+		
+	3. Auto heal : it will control or auto heal the container.
+		if a container goes down before it goes down it will create new container.
+		
+	4. Enterprise Nature : Docker doesn't have Enterprise Nature.
+		Docker does not support load supports,auto heal etc.
+		
+K8's Architecture: 
+		
+	Docker Strim is responsible to run container.
+	in K8's to deploy pod kubelet will take responsibility to run pod.
+	kube-proxy responsible for networking IP address and load balancing.
+	
+	Componenets present in worker node : (Data plane)
+		1. Container run-time
+		2. Kubelet
+		3. kube-proxy
+	K8's Core Component present in master (Control panel).It is also called API server.
+	Scheduler : what api will bring that work done by schedular on nodes.
+	etcd : used for backup to  cluster information
+	controller manager : 
+	cloud controller manager : 
+	
+	Master Contains : (Control plane)
+		1. Api Server
+		2. Scheduler
+		3. etcd -- to store data.
+		4. Controller  manager
+		5. cloud
+		install :
+	minikube,kubectl
+	kubectl : command line tool for kubernetes.
+	
+	To create pod in minikube
+	
+		1.vi pod.yml
+		2. kubectl create -f pod.yml
+		3. kubectl get pods -o wide
+		4. minikube ssh
+		5. curl ip address
+		
+	kubectl delete pod <pod_name> : to delete pod.
+	
+	kubectl describe pod <pod_name> : to debug the pod
+	
+	kubectl logs pods <name of pod>  or kubectl logs <pod  name>
+
+================================================================================================================================
+Kubernetes Deployment : 
+
+		pod --> deploy --> replica set --> pod
+		
+		kubectl get all 
+		kubectl get all -A : to get all the applications in a cluster.
+		
+		kubectl delete pod nginx : to delete a pod
+		
+		kubectl get deploy 
+		
+		kubectl apply -f deployment.yml
+		
+		kubectl get rs
+
+______________________________________________________________________________________________
+
+Kubernetes :
+	[1]  07-01-24
+ 
+Kubernetes resources:
+    1. pods
+    2. deployments
+    3. volumes
+    4. persistent volumes 
+    5. persistent volume claims
+    6. configmaps
+    7. secrets
+
+cluster contains : 
+
+    control planel contains Api server (kubernetes core), etcd, controllermanager, scheduler.
+
+    worknodes : kubectl,kubeproxy, container engine.
+		
+
+Installation Steps : 
+
+1. Create IAM role to maintain Eks cluster
+    Create a Eks cluster from aws services.
+    add a iam role to the eks cluster.
+    based on cluster version download kubectl for clients machine.
+	
+		
+2.install kubectl & awscli in k8's client machine:
+    1. apt update
+    2. apt install awscli -y
+    add aws configure details 
+    aws configure
+ 3. install kubectl form offical k8's documentation.
+    give execute permission for kubectl after downloading.
+    chmod +x kubectl
+			
+    To work kubectl globally move kubectl to /usr/bin 
+        mv kubectl /usr/bin
+		
+	
+    Comamnd to get kubeconfig file from eks to client machine	
+    aws eks update-kubeconfig  --name Cluster01 --region eu-north-1 : to get kubeconfig file
+	 
+    after running this command a .kube will be created in root.(from eks to client machine).
+
+	
+    3. create wokernodes for the created cluster to access the worker nodes create a role for Ec2 machines.
+        and add below policies for the role and create a role.
+			AmazonEC2ContainerRegistryReadOnly	
+			AmazonEKS_CNI_Policy	
+			AmazonEKSWorkerNodePolicy
+		 
+	 
+aws eks update-kubeconfig --region ap-south-1 --name Cluster01
+
+kubectl get po : to get the pods
+kubectl run nginx --image ngnix : to run the pod.
+kubectl delete po <pod_name> : to deletethe pod.
+kubectl api resources : to know the resources.
+
+___________________________________________________________________________________________________________________________________________
+
+[2] 08-01-24 
+
+    kubectl cluster-info
+    kubectl run  <pod-name> --image nginx : to run a pod.
+    kubectl apply -f <yaml-file> : to run a pod.
+    kubectl get po -o wide : to know where this pods are running.
+    kubectl explain pod : to know about the pod.
+    kubectl delete -f <pod-name> : to delete the pod
+    kubect apply : used to crteate pods using yaml file.
+	
+    kubectl delete po --all: to delete all the runnig pods in the cluster.
+    kubectl appy -f <pod-name> -f <pod-name> : to run multiple pods.
+	
+    pods can be deployed in particular machine or worknode by specifing the node name in yaml file.
+
+    pods configuration can not be changed onced deployed only image can change inside yaml file.
+	 
+        1. specifying the node name:
+		
+			apiVersion: v1
+			kind: Pod
+			metadata:
+			  name: single-container-pod
+			spec:
+			 nodeName: minikube or (172.637.388.89 ip-add of node)
+			 containers:
+			   - name: single-container
+				 image: httpd
+				 
+        2. using the node selector:
+			 
+kubectl get no --show-labels : to show the labels
+kubectl  label node minikube disktype=ssd : used to set custom node name.
+			 
+				apiVersion: v1
+				kind: Pod
+				metadata:
+				  name: pod-1
+				spec:
+				  containers:
+				  - name: single-cont
+					image: httpd
+				  nodeSelector:
+					disktype: ssd
+							 
+ if your using the ip address in yaml file and if pod is deleted or exited we should run manually because ip address is dynamic 
+ so using labels is better.
+____________________________________________________________________________________________________________________________________________
+
+[3] 09-01-24
+
+	A pod can contain one or more containers if it is a standalone pod if pod exited it didn't start automatically so we using 
+		replica it will create another pod before the running pod terminates.
+	
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: first-pod
+spec:
+
+  replicas: 1
+  selector:
+   matchLabels:
+    env: dev
+
+  template:
+    metadata:
+      name: container-1
+      labels:
+        env: dev
+    spec:
+      containers:
+       - name: first-container
+         image: nginx
+
+		kubectl get rs : to know the replica sets
+		kubectl scale rs first-pod  --replicas 3 : scale up and scale down the replica sets.
+		replica set to id the pods we are mentioning labels inside template and add same label in replicas.
+		
+		
+___________________________________________________________________________________________________________________________________________
+
+[04] 09-01-24
+
+	kubectl get all : 
+	
+	rollout strategy: we should need a zero down time for this we are using deployment method.
+				
+				deployment: 
+					1. rollout
+					2. recreate
+					
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+     name: first-deployment
+spec:
+     replicas: 3
+     selector:
+       matchLabels:
+           a: america
+     template:
+        metadata:
+          labels:
+             a: america
+        spec:
+           containers:
+             - name: container-1
+               image: httpd
+
+
+					
+	kubectl rollout history deployment first-deployment -- to know the deployment history
+
+	kubectl rollout undo --to-revision 1 deployment first-deployment -- to rollback 
+	
+	kubectl delete -f deploy.yaml : to delete the deployment.
+	
+	
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+     name: first-deployment
+spec:
+     strategy:
+       type: Recreate
+     replicas: 3
+     selector:
+       matchLabels:
+           a: america
+     template:
+        metadata:
+          labels:
+             a: america
+        spec:
+           containers:
+             - name: container-1
+               image: httpd
+
+	kubectl get deploy,rs : 
+
+	To expose the container to the internet we need a service .
+	
+apiVersion: v1
+kind: Service
+metadata:
+        name: my-service
+spec:
+       type: LoadBalancer
+       selector:
+          a: america
+       ports:
+         - protocal: TCP
+           port: 80
+
+ 
+		service is three types:
+			1. clusterIP-internal
+			2. nodeport
+			3. LoadBalancer- dns 
+			
+    kubectl get no -o wide: to know the cluster details.
+__________________________________________________________________________________________________________________________________________________________
+
+[05] 09-01-24
+
+        aws eks list-clusters : to list the clusters.
+        kubectl describe po <pod-name> : to describe the pods.
+		
+        kubectl logs -f <pod-name> :
+        kubectl logs -f <pod-name> -c <container-name> : to check the container logs.
+        kubectl get service : to know the services.
+		
+        kubectl delete all --all : to delete all services, pods, replicas, containers.
+		
+________________________________________________________________________________________________________________________________________________________
+
+[6] 09-01-2024
+
+	pod life cycle : 
+			
+			1. pending -- if you given anything wrong in yaml file.
+			2. running 
+			3. succeded
+			4. failed
+			5. unknown
+			
+                kubectl replace -f <yaml_file_name> --force : to replace the running pod because pod is immutable.
+			
+        container life cycle : 
+			
+			
+	cm- config : 
+	
+        kubectl create cm first-cm --from-literal=a=ansible --from-literal=b=bangalore : to create envoirnment variable
+		
+            kubectl get cm : to know the config created 
+		
+            kubectl describe cm first-cm : 
+		
+        kubectl create secret first-secret --from-literal=username=admin --form-literal=password=admin@123
+		
+        we will create in config or secrects.
+		
+		Injecting these values into the pod.
+		 
+        kubectl exec -it nginx -- bash : to login into the container.
+		
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+     name: first-deployment
+spec:
+     replicas: 3
+     selector:
+       matchLabels:
+           a: america
+     template:
+        metadata:
+          labels:
+             a: america
+        spec:
+           containers:
+             - name: container-1
+               image: httpd
+               volumeMounts:
+                 - name: first-volume
+              mountPath: /app
+           volumes:
+           - name: first-volume
+           configMap:
+             name: first-cm
+
+			
+	without create a new pod and replace with a running pod we should use Volume mount just make env changes to a running pod.
+	
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      a: america
+  template:
+    metadata:
+      labels:
+        a: america
+    spec:
+      containers:
+      - name: firstcontainer
+        image: httpd
+        volumeMounts:
+        - name: second-volume
+          mountPath: /app
+      volumes:
+      - name: second-volume
+        configMap:
+          name: first-cm
+
+	kubectl create cm first-cm --from-literal=a=ansible --from-literal=b=bangalore --dry-run=client -o yaml : to generate an yaml file.
+	
+__________________________________________________________________________________________________________________________________________________________
+	
+	[07] 10-01-24
+	
+	kubectl create secret generic first-secret --from-literal=a=admin --from-literal=p=password --dry-run=client -o yaml : to geneerate an yaml file.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      a: america
+  template:
+    metadata:
+      labels:
+        a: america
+    spec:
+      containers:
+        - name: container-1
+          image: httpd
+          envFrom:
+            - secretRef:
+                name: first-secret
+				
+kubectl create secret generic first-secret --from-literal=user=jenkins --from-literal=pass=jenkinsjenkin --dry-run=client -o yaml 
+> sec.yaml : to generate an yaml file and copy to sec.yaml file.
+	
+
+	kubectl replace -f <yaml-file> --force : to replace the deployment.
+
+
+
+	To inject values is two types 1.Envfrom  2.volume mount
+	
+	kubectl replace -f secret.yaml --force : to replace the yaml file.
+	
+	
+
+Persistent Volumes : 
+
+	Create a folder in worker node (Amazon linux machine).
+	
+	awsElasticBlockStore : create a volume in aws.
+	
+	kubectl get pv : to get the volumes.
+	
+		1.persistent volume yaml file contains aws volume id (ebs volume id)
+		2.persistent volume claim 
+		3.deployment yaml file inside this pvc is attached.
+
+	
+	chmod +x * : to give execute permission to all the files.
+	
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+        name: task-pv-volume
+        labels:
+                type: aws
+spec:
+        storageClassName: manual
+        capacity:
+                storage: 50Gi
+        accessModes:
+                - ReadWriteOnce
+        awsElasticBlockStore:
+                volumeID: "vol-0c1f5aca4bdb9039b"
+                fsType: ext4
+
+        // PVC //
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+        name: task-pv-claim
+spec:
+        storageClassName: manual
+        accessModes:
+                - ReadWriteOnce
+        resources:
+                requests:
+                        storage: 50Gi
+
+           // deploy //
+           
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      a: america
+  template:
+    metadata:
+      labels:
+        a: america
+    spec:
+      containers:
+        - name: container-1
+          image: httpd
+          volumeMounts:
+            - name: pv-vol
+              mountPath: /app
+      volumes:
+        - name: pv-vol
+          persistentVolumeClaim:
+            claimName: task-pv-claim
+
+__________________________________________________________________________________________________________________________________________
+		
+[08] 17-01-24
+
+kubectl get ns : to know the namespaces.
+kubectl create ns flip[pkart : used to create a  namespaces.
+kubectl run nginx --image nginx -n flipkart : used to run a pod.
+kubectl get po -n flipkart: used to get pods running in flipkart namespace.
+kubectll delete po --all -n flipkart: to delete all the pods in namespace.
+kubectl config view : to dispaly the config file.
+kubectl top pods: to know the ram,cpu utilization of pod.
+    Storage Class: it will dynamically create the provision volumes in aws.
+		it is two types : immediate, first-deploy. 
+        
+        kubernetes cluster having a default storage class.
+      
+    we can create a custom storage class with yaml file.
+	
+	
+    
+    Name Space	:  is used to isolate the objects or resources from other projects.
+	
+	 
+        we can create a custom name space also.
+        k8 contains 4 default name spaces.
+    Run a metric server to know the node performance, and cpu,memory utilised by node.
+	
+	
+	apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+        name: task-pv-claim
+spec:
+        storageClassName: gp2
+        accessModes:
+                - ReadWriteOnce
+        resources:
+                requests:
+				
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-elasticsearch
+  namespace: kube-system
+  labels:
+    k8s-app: fluentd-logging
+spec:
+  selector:
+    matchLabels:
+      name: fluentd-elasticsearch
+  template:
+    metadata:
+      labels:
+        name: fluentd-elasticsearch
+    spec:
+      containers:
+      - name: fluentd-elasticsearch
+        image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        
+____________________________________________________________________________________________________________________________________________
+
+
+[09] 18-01-24 
+
+    Daemonsets: make sure to run a copy of pod in all the worker machines.
+        used for server monitoring or log monitoring.
+        
+    Statefulset: it is similar to replica set. pods will comeup with new identity when scale up the pods.
+		pods will comeup with sequential order.
+    
+    ingress: microservice architecture-- making functionality of app into pieces.
+		
+		- Load balancer is created by ingress controller.
+		- ingress rule is attached to ingrss controller from there to ingress service and then to pod.
+		- we should attach a hosted zone in ingress rule.

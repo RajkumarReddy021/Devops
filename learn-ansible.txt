@@ -1,0 +1,212 @@
+---
+- name: 
+  hosts: localhost
+  tasks: 
+  - name: install tree
+    apt:
+     name: tree 
+     state: present
+  - name: install zip
+    apt: 
+        name: zip
+        state: present
+- name: 
+  hosts: localhost
+  tasks: 
+  - name: uninstall tree
+    apt:
+     name: tree
+     state: absent
+  - name: uninstall zip
+    apt: 
+        name: zip
+        state: absent
+=============================================        
+       
+- name: To create a user 
+  hosts: localhost
+  tasks: 
+  - name: user creation
+    user:
+        name: user_one
+        state: present
+        shell: /bin/bash
+        home: /home/user_one
+============================================
+
+- name: To run a service 
+  hosts: localhost
+  tasks: 
+  - name: start service
+    service:
+        name: sshd
+        state: started
+============================================
+- name: first paly  
+  hosts: localhost
+  tasks: 
+  - name: replacing a string
+    repalce:
+        path: /home/ubuntu/a.txt
+        regexp: string_name
+        replace: add_new string
+============================================
+---
+- name: first play book
+  hosts: localhost
+  vars: 
+    package_one: zip
+  tasks: 
+  - name: install any software
+    apt: 
+     name: '{{package_one}}'
+     state: present
+============================================
+---
+- name: first play book
+  hosts: localhost
+  vars: 
+    package_one: zip
+    package_two: tree
+    package_three: net-tools
+  tasks: 
+  - name: install zip
+    apt: 
+     name: '{{package_one}}'
+     state: present
+  - name: install tree
+    apt: 
+     name: '{{package_two}}'
+     state: present
+
+ansible-playbook file.yaml -e package_one= tree  -e package_two= zip  
+============================================
+- name: first paly  
+  hosts: server1
+  become: true (it will use sudo)
+  tasks: 
+  - name: install tree 
+    apt: 
+        name: tree
+        state: present
+        update_cache: yes 
+============================================
+Inside host file add server details
+    server1 ansible_host=IP_address ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/ssh-key
+    
+    change permission for key file own only read.
+
+- name: first paly  
+  hosts: 
+  - server1
+  - server2
+  become: true (it will use sudo)
+  tasks: 
+  - name: install tree 
+    apt: 
+        name: tree
+        state: present
+        update_cache: yes  
+============================================
+- name: first paly  
+  hosts: '{{ server_name}}'
+  vars: 
+    server_name: all
+    state: present
+    state: present
+  tasks:
+  -name: firs-task
+   apt: 
+       name: zip
+       state: '{{state}}'
+       update_cache: yes
+       
+============================================
+
+---
+- hosts:
+  - dev
+  - qa
+  become: yes
+  tasks:
+    - name: install Nginx on Debian based OS Family
+      apt:
+        name: nginx
+        state: latest
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install packages on Debian based OS Family
+      become: yes
+      package:
+        name:
+          - wget
+          - vim
+          - unzip
+          - net-tools
+          - curl
+          - tar
+        state: latest
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install EPEL release for Nginx on RedHat based OS Family but CentOS
+      yum:
+        name: epel-release
+        state: present
+      when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] == "CentOS"
+
+    - name: Install Nginx web server on RedHat based OS Family but CentOS
+      yum:
+        name: nginx
+        state: latest
+      when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] == "CentOS"
+=================================================================================================
+
+---
+- name: first loop
+  hosts: dev
+  become: yes
+  tasks:
+  - name: install packages
+    apt:
+        name: 
+        - wget
+        - curl
+        - tar
+        - zip
+        - net-tools
+        state: present
+        update_cache: yes
+=====================================================
+
+Roles: 
+ 
+ ansible-galaxy  role init role_name : to create a role
+ 
+    create a playbook.yaml
+        ---
+        - hosts: dev
+          become: true
+          roles:
+          - apache2 (mention the roles created)
+          
+    inside a role directories for every directory there is  a main file.
+        ---
+        - name: first-tak
+          apt: 
+            name: apache2
+            state: present
+            update_cache: yes
+            
+        ---
+        - name: net-tools install
+          apt: 
+            name: net-tools
+            state: present
+        ---    
+        - name: install zip
+          apt: 
+            name: zip
+            state: present
+            update_cache: yes
+            

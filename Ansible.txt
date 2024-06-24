@@ -1,0 +1,308 @@
+Ansible ==================
+==========================
+It has Idempotent(skipping) Technique which shell script doesn't have.
+1. Configuration Management 
+2. Application Deployments
+3. Infrastructure Management  
+
+Configuration management :  In the sense 
+1. creation of  folders/files
+2. deleting folders/files
+3. Installations
+4. Permission updates in top of files/directories.
+
+Application Deployments:
+1. Copying a jar/war into a application server. (tomcat)
+
+=========================================== 
+
+Installing Ansible::::
+apt update
+apt install ansible -y
+
+==============================================================
+ad-hoc commands :
+
+1. ansible --version
+2.  which ansible
+3.  ansible localhost -m ping
+4.  ansible localhost -m apt -a 'update_cache=yes'
+5.  ansible localhost -m apt -a 'update_cache=yes' -vv
+6.  ansible localhost -m apt -a 'update_cache=yes' -v
+7.  ansible localhost -m apt -a 'name=tree state=latest' -vvv
+8.  ansible localhost -m apt -a 'name=tree state=latest' -vvv
+9.  ansible localhost -m apt -a 'name=nginx state=latest'  -vv
+10. ansible  localhost -m service -a 'name=nginx state=stopped'
+11. ansible  localhost -m service -a 'name=nginx state=started'
+12. ansible  localhost -m service -a 'name=nginx state=started'
+13. ansible  localhost -m shell -a 'netstat -lntup'
+14. ansible  localhost -m shell -a 'ps -ef | grep -i nginx'
+15. ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=directory'
+16. ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=absent'
+17. ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=directory mode=0777 owner=ubuntu group=ubuntu'
+18. ansible localhost -m file -a 'path=/home/ubuntu/a.java state=touch'
+19. ansible localhost -m file -a 'path=/home/ubuntu/a.java state=absent'
+20. ansible localhost -m file -a 'path=/home/ubuntu/b.java state=touch owner=ubuntu group=ubuntu mode=777'
+============================================================================================================================
+Complete below task Using Ansible Ad-hoc commands:::::::
+
+Task 1 :  I want to create a folder abc in /home/ubuntu/ using ansible ?
+Task 2 : I want to delete a folder abc in /home/ubuntu/ using ansible ?
+Task 3 : I want to change the permissions  to a folder using ansible ?
+Task 4 : I want to create a file using ansible ?
+
+============================================================================================================================
+Modules :
+file : is used to create/delete/modify permission on file or directory.
+ex: ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=directory'
+ex: ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=absent'
+ex: ansible  localhost -m file -a 'path=/home/ubuntu/from_ansible state=directory mode=0777 owner=ubuntu group=ubuntu'
+ex: ansible localhost  -m file -a 'path=/home/ubuntu/a.java state=touch' 
+ex: ansible localhost  -m file -a 'path=/home/ubuntu/a.java state=absent'
+ex: ansible localhost  -m file -a 'path=/home/ubuntu/b.java state=touch owner=ubuntu group=ubuntu mode=777'
+
+====
+apt : is used to install softwares.
+ex: ansible localhost -m apt -a 'name=tree state=latest'
+====
+archive:  creates a zip/targz file.
+ex: ansible localhost -m archive -a 'path=/home/ubuntu/first_dir dest=/home/ubuntu/first_dir.zip'
+====
+unarchive: is used to extract zip/targz files.
+ansible localhost -m unarchive -a 'src=/home/ubuntu/apache-tomcat-9.0.74.zip dest=/home/ubuntu/'
+====
+get_url: is used to download file/package from internet.
+ex: ansible localhost -m get_url -a 'url=https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74.zip dest=/home/ubuntu/'
+====
+copy : is used to copy a file from one location to other location.
+ex: ansible localhost -m copy -a 'src=/home/ubuntu/abc dest=/tmp/'
+====
+lineinfile: is used to add a line in a file or replace a line in a file.
+ex: ansible localhost -m lineinfile -a 'path=/home/ubuntu/abc line="Injection is happening from ansible command line"'
+ex: ansible localhost -m lineinfile -a 'path=/home/ubuntu/abc regexp=^Injection\s line="bangalore"'
+====
+user: is used to create/delete a user.
+ex: ansible localhost -m user -a 'name=user1 state=present'
+ex: ansible localhost -m user -a 'name=user1 state=absent'
+====
+service:  is used to start/restart/stop the existing service in Linux system.
+ex: ansible localhost -m service -a 'name=sshd state=restarted'
+====
+replace: is used to replace a string in a file.
+ex: ansible localhost -m replace -a 'path=/home/ubuntu/abc regexp="bangalore" replace="hyderabad"'
+====
+
+
+
+
+playbooks:  which host multiple plays/tasks/handlers/vars.
+
+
+ansible-playbook  playbook.yaml --syntax-check : is used to check the syntax-check
+ansible-playbook  playbook.yaml -C : is used to dry run without applying any changes.
+ansible-playbook playbook.yml
+
+============================================================================================================================
+
+- name: This is a First Playbook used to install some softwares
+  hosts: localhost
+  tasks:
+  - name: this task is used to perform update
+    apt:
+      update_cache: yes
+  - name: this task is used to perform zip installation
+    apt:
+      name: zip
+      state: present
+============================================================================================================================
+- name: First Playbook is used to install some softwares
+  hosts: localhost
+  tasks:
+  - name: uninstall zip
+    apt:
+      name: zip
+      state: absent
+  - name: uninstall unzip
+    apt:
+      name: unzip
+      state: absent
+
+
+	  
+===
+Variables : Instead of hardcoding the values we can use variables. dynamically we can change the values and install softwares based up on need.
+
+---
+- name: First Play
+  hosts: localhost
+  vars:
+    package: net-tools
+    package2: apache2
+    package3: unzip
+  tasks:
+  - name: This is used to perform update
+    apt:
+      update_cache: yes
+  - name: This task is used to install zip utility
+    apt:
+      name: '{{ package }}'
+      state: absent
+  - name: Install unzip
+    apt:
+      name: '{{ package2 }}'
+      state: absent
+- name: Secod Play
+  hosts: localhost
+  tasks:
+  - name: This task is used to install tar utility
+    apt:
+      name: '{{ package3 }}'
+      update_cache: yes
+      state: absent  
+	  
+===================================
+How to change the variables on the fly while running ansible playbook command ?
+ex:  ansible-playbook -i hosts playbook3.yaml -e package=tree -e package2=tar -e package3=wget 	  
+  
+
+===================================
+Inventory:
+Collection of Host servers and their information like username/passwords/private_keys/Ips. 
+example :
+[dev]
+server1 ansible_python_interpreter=python3  ansible_ssh_user=ubuntu  ansible_connection=ssh ansible_port=22 ansible_ssh_private_key_file=/home/ubuntu/ssh-key ansible_host=65.2.177.117
+
+Default Location: /etc/ansible/hosts
+If using custom location : ansible-playbook -i hosts  apt.yaml
+===================================
+COnditions:
+In few cases we need to execute tasks based up on conditions, some times we need to skip the tasks and sometimes we need to execute the task.
+example:
+---
+
+- hosts: localhost
+  become: yes 
+  tasks:
+  - name: install  in nginx Debian based OS Family
+    apt:
+      name: nginx
+      state: latest
+    when: ansible_facts['os_family'] == "Debian"
+  - name: Install packages in Debian based OS Family
+    become: yes
+    package:
+      name:
+        - wget
+        - vim
+        - unzip	
+        - net-tools
+        - curl
+        - tar
+      state: latest
+      update_cache: yes
+    when: ansible_facts['os_family'] == "Debian"
+  - name: Install EPEL release for nginx in RedHat based OS Family but CentOs
+    yum:
+      name: epel-release
+      state: present
+    when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] == "CentOS"
+  
+  - name: Install nginx web server in RedHat based OS Family but CentOs
+    yum:
+      name: nginx
+      state: latest
+      update_cache: true
+    when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] == "CentOS"
+	
+===============================	
+Loops :
+sometimes we need to repeat the execution of the same task using different values. For this purpose we have loops.
+ex:
+- name: this is our first play.
+  hosts: localhost
+  tasks: 
+  - name: 'installing'
+    apt: 
+	  name: "{{ item }}" 
+	  state: present
+    with_items: 
+    - wget
+    - tree
+	- zip
+	- tar
+
+ex2:	
+---
+- name: this is our first play.
+  hosts: localhost
+  vars:
+    package:
+    - wget
+    - zip
+  tasks:
+  - name: 'installing'
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - "{{ package }}"
+===============================
+Handlers :  to reload/start/restart  services we use handlers. present in bottom of ansible playbook and using notify we can call handlers.
+---
+- name: This Play is Used to Create a Utility called Tree
+  hosts: localhost
+  tasks:
+  - name: Install nginx
+    apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+    notify: nginx start
+  - name: Install curl
+    apt:
+      name: curl
+      state: present
+    notify: nginx start
+
+  handlers:
+  - name: nginx start
+    service:
+      name: nginx
+      state: restarted
+	  
+====================================================================	  
+Roles :  
+Collection of files,templates,tasks,vars, handlers,playbooks. it's  standard directory structure. 
+The role helps us in breaking a playbook into multiple files
+Roles let you automatically load related vars, files, tasks, handlers, and other Ansible artifacts based on a known file structure. 
+
+defaults: contains default variables for the role. Variables in default have the lowest priority so they are easy to override.
+
+vars: contains variables for the role. Variables in vars have higher priority than variables in the defaults directory.
+
+tasks: contains the main list of steps to be executed by the role.
+
+files: contains files that we want to be copied to the remote host. We don’t need to specify a path of resources stored in this directory.
+
+templates: contains file template which supports modifications from the role. We use the Jinja2 templating language for creating templates.
+
+meta: contains metadata of roles like an author, support platforms, dependencies.
+
+handlers: contains handlers that can be invoked by “notify” directives and are associated with service.
+====================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

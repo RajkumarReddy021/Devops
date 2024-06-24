@@ -41,7 +41,14 @@
 
 
 19. /[string] : to check string in a file (N allows to check all the occurences of string)
+
 20. find . -name "**config**" : to check the folder or file.
+
+21. ssh -i ssh-key ubuntu@Public IP
+
+22. chmod 400 : owner should have only read permission
+
+23. 
 
 
 

@@ -48,9 +48,9 @@
 
 22. chmod 400 : owner should have only read permission
 
-23. 
+23. For CIDR we ask with network team
 
-
+24.
 
 
 
